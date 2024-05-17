@@ -35,15 +35,6 @@ func ConvertibleToFallback(_ ConversionFinderFunc, fType, tType reflect.Type) Fr
 			return nil
 		}
 	}
-	// if tType is a pointer, so try convertible to the target type without pointer
-	if tType.Kind() == reflect.Pointer && fType.ConvertibleTo(tType.Elem()) {
-		return func(from reflect.Value, ptrTo reflect.Value) error {
-			// tempVar := from.(To)
-			convertedValue := from.Convert(tType.Elem())
-			ptrTo.Elem().Set(convertedValue)
-			return nil
-		}
-	}
 	return nil
 }
 
