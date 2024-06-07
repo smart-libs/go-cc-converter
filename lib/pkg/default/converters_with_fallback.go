@@ -9,53 +9,21 @@ import (
 )
 
 type (
-
-	// ConvertersOptions suggest options to be considered by the implementation
-	ConvertersOptions struct {
-		// OnNoMoreFallbacks is used when the default Converters (converterRegistry) has no more fallbacks to use.
-		// You can replace this behavior.
-		OnNoMoreFallbacks converter.FromToFunc
-
-		// ConversionFallbackList is the default list of TryNewConversionFunc used when there is no registered converter to use.
-		ConversionFallbackList []fallback.TryNewConversionFunc
-
-		DisableFallbackRegistry bool
-	}
-
 	// defaultConverters is a repository of conversion functions
 	defaultConverters struct {
-		options          ConvertersOptions
+		options          FallbackOptions
 		registry         converter.Registry
 		fallbackRegistry fromToMap[fallback.FromToFunc]
 	}
 )
 
-var (
-	Converters = NewConverters(Registry)
-)
-
-var (
-	defaultOptions = ConvertersOptions{
-		// OnNoMoreFallbacks default is to return error
-		OnNoMoreFallbacks: func(from any, to any) error { return convertererror.NewConversionNotFoundError(from, to) },
-
-		// ConversionFallbackList has the default list of TryNewConversionFunc
-		ConversionFallbackList: []fallback.TryNewConversionFunc{
-			fallback.FromTypeEqualsToTypeFallback,
-			fallback.ConvertibleToFallback,
-			fallback.ToArrayTypeFallback,
-			fallback.PointerToPointerToTReflection,
-			fallback.PointerFallback,
-			fallback.FromAnyFallback, // search first for string type, last option is any
-		},
-	}
-)
-
-func NewConverters(registry converter.Registry) converter.Converters {
-	return NewConvertersWithOptions(registry, defaultOptions)
+// not planned to be exposed so far
+func newConvertersWithFallback(registry converter.Registry) converter.Converters {
+	return newConvertersWithFallbackOptions(registry, defaultFallbackOptions)
 }
 
-func NewConvertersWithOptions(registry converter.Registry, options ConvertersOptions) converter.Converters {
+// not planned to be exposed so far
+func newConvertersWithFallbackOptions(registry converter.Registry, options FallbackOptions) converter.Converters {
 	if registry == nil {
 		panic(fmt.Errorf("%T cannot be nil", registry))
 	}
@@ -65,8 +33,6 @@ func NewConvertersWithOptions(registry converter.Registry, options ConvertersOpt
 		fallbackRegistry: newFromToMap[fallback.FromToFunc](),
 	}
 }
-
-func To[T any](f any) (T, error) { return converter.To[T](Converters, f) }
 
 func (r *defaultConverters) ConvertToType(from any, toType reflect.Type) (any, error) {
 	targetValue := reflect.New(toType)
