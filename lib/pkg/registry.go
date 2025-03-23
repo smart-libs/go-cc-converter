@@ -29,6 +29,7 @@ func assertNotNilRegistry(r Registry) Registry {
 	return r
 }
 
+// AddHandler adds the new conversion function and all possible Generic fallbacks
 func AddHandler[From any, To any](registry Registry, fromToFunc func(From, *To) error) {
 	assertNotNilRegistry(registry).Add(CreateHandler[From, To](fromToFunc))
 	AddFallbacks[From, To](registry, fromToFunc)
