@@ -13,7 +13,6 @@ func init() {
 		Decimal     = convertertypes.Decimal
 		Hexadecimal = convertertypes.Hexadecimal
 		ImpliedBase = convertertypes.ImpliedBase
-		Base        = convertertypes.IntBase
 	)
 
 	AddHandlerWithReturnNoError(strconv.Itoa)
