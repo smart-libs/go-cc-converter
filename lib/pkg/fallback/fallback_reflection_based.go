@@ -52,13 +52,36 @@ func ToArrayTypeFallback(find ConversionFinderFunc, fType, tType reflect.Type) F
 				return nil
 			}
 		}
-		if fType.Kind() == reflect.Pointer {
+		fKind := fType.Kind()
+		if fKind == reflect.Slice || fKind == reflect.Array {
+			// Now we know tType and fType are arrays so we need to find a function that converts the fType element
+			// into the tType element
+			if conversionFunc := find(fType.Elem(), arrayElementType); conversionFunc != nil {
+				// found conv(*from fType element, tType element)
+				return func(fValue reflect.Value, ptrToValue reflect.Value) error {
+					fLen := fValue.Len()
+					slice := reflect.MakeSlice(ptrToValue.Elem().Type(), fLen, fLen)
+					ptrToValue.Elem().Set(slice)
+					ptrToValueElement := reflect.New(arrayElementType)
+					for i := 0; i < fLen; i++ {
+						fElem := fValue.Index(i)
+						if err := conversionFunc(fElem, ptrToValueElement); err != nil {
+							return err
+						}
+						ptrToValue.Elem().Index(i).Set(ptrToValueElement.Elem())
+					}
+					return nil
+				}
+			}
+		}
+		if fKind == reflect.Pointer { // source is a pointer tries its element
 			if fallbackFunc := ToArrayTypeFallback(find, fType.Elem(), tType); fallbackFunc != nil {
 				return func(fromVal, ptrToVal reflect.Value) error {
 					return fallbackFunc(fromVal.Elem(), ptrToVal)
 				}
 			}
 		}
+		// tries to find a conversion from fType to the target array element
 		if conversionFunc := find(fType, arrayElementType); conversionFunc != nil { // conv(*from,element type)
 			return func(fValue reflect.Value, ptrToValue reflect.Value) error {
 				convertedPtr := reflect.New(arrayElementType)
