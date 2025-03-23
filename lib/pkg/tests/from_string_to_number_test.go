@@ -65,7 +65,7 @@ func TestFromStringToInt8Binary(t *testing.T) {
 	var to *BinInt8
 	testFromTo(t, []testCase[string, *BinInt8]{
 		{
-			name: fmt.Sprintf("string(\"121\") to *BinInt8(5)"),
+			name: "string(\"121\") to *BinInt8(5)",
 			args: argsFromTo[string, *BinInt8]{from: "121", to: &to},
 			wantErr: func(t assert.TestingT, err error, i ...interface{}) bool {
 				expected := "From(string).To(convertertypes.Int8[github.com/smart-libs/go-cc-converter/lib/pkg/types.Binary]): strconv.ParseInt: parsing \"121\": invalid syntax"
@@ -83,7 +83,7 @@ func TestFromStringToUint8Binary(t *testing.T) {
 	var to *BinUint8
 	testFromTo(t, []testCase[string, *BinUint8]{
 		{
-			name: fmt.Sprintf("string(\"121\") to *BinUint8(5)"),
+			name: "string(\"121\") to *BinUint8(5)",
 			args: argsFromTo[string, *BinUint8]{from: "121", to: &to},
 			wantErr: func(t assert.TestingT, err error, i ...interface{}) bool {
 				expected := "From(string).To(convertertypes.Uint8[github.com/smart-libs/go-cc-converter/lib/pkg/types.Binary]): strconv.ParseUint: parsing \"121\": invalid syntax"
@@ -100,7 +100,7 @@ func TestFromStringToInt8Octal(t *testing.T) {
 	var to *OctInt8
 	testFromTo(t, []testCase[string, *OctInt8]{
 		{
-			name:    fmt.Sprintf("string(\"121\") to *OctInt8(121)"),
+			name:    "string(\"121\") to *OctInt8(121)",
 			args:    argsFromTo[string, *OctInt8]{from: "121", to: &to},
 			wantErr: assert.NoError,
 			wantTo:  &d121,
@@ -114,7 +114,7 @@ func TestFromStringToInt8Decimal(t *testing.T) {
 	var to *DecInt8
 	testFromTo(t, []testCase[string, *DecInt8]{
 		{
-			name:    fmt.Sprintf("string(\"121\") to *DecInt8(121)"),
+			name:    "string(\"121\") to *DecInt8(121)",
 			args:    argsFromTo[string, *DecInt8]{from: "121", to: &to},
 			wantErr: assert.NoError,
 			wantTo:  &d121,
@@ -128,7 +128,7 @@ func TestFromStringToInt16Hexadecimal(t *testing.T) {
 	var to *HexaInt8
 	testFromTo(t, []testCase[string, *HexaInt8]{
 		{
-			name:    fmt.Sprintf("string(\"24\") to *HexaInt8(36)"),
+			name:    "string(\"24\") to *HexaInt8(36)",
 			args:    argsFromTo[string, *HexaInt8]{from: "24", to: &to},
 			wantErr: assert.NoError,
 			wantTo:  &d24,
